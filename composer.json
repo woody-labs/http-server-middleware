@@ -1,0 +1,27 @@
+{
+    "name": "woody/http-server-middleware",
+    "description": "",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Sebastien Malot",
+            "email": "sebastien@malot.fr"
+        }
+    ],
+    "require": {
+        "php": "^7.1",
+        "psr/http-server-middleware": "^1.0",
+        "woody/http-message": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "Woody\\Http\\Server\\Middleware\\": "src"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "sort-packages": true
+    }
+}
