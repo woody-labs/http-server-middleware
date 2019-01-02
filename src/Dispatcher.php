@@ -5,7 +5,6 @@ namespace Woody\Http\Server\Middleware;
 use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 /**
@@ -17,7 +16,7 @@ class Dispatcher implements RequestHandlerInterface
 {
 
     /**
-     * @var \Psr\Http\Server\MiddlewareInterface[]
+     * @var \Woody\Http\Server\Middleware\MiddlewareInterface[]
      */
     protected $middlewareStack;
 
@@ -27,20 +26,38 @@ class Dispatcher implements RequestHandlerInterface
     protected $index;
 
     /**
+     * @var bool
+     */
+    protected $debug;
+
+    /**
      * Dispatcher constructor.
      */
     public function __construct()
     {
         $this->middlewareStack = [];
         $this->index = 0;
+        $this->debug = false;
     }
 
     /**
-     * @param \Psr\Http\Server\MiddlewareInterface $middleware
+     * @param bool $status
+     *
+     * @return \Woody\Http\Server\Middleware\Dispatcher
+     */
+    public function enableDebug($status = null): self
+    {
+        $this->debug = (is_null($status) || $status === true);
+    }
+
+    /**
+     * @param \Woody\Http\Server\Middleware\MiddlewareInterface $middleware
      */
     public function pipe(MiddlewareInterface $middleware): void
     {
-        $this->middlewareStack[] = $middleware;
+        if ($middleware->isEnabled($this->debug)) {
+            $this->middlewareStack[] = $middleware;
+        }
     }
 
     /**
@@ -69,7 +86,7 @@ class Dispatcher implements RequestHandlerInterface
     }
 
     /**
-     * @return \Psr\Http\Server\MiddlewareInterface|null
+     * @return \Woody\Http\Server\Middleware\MiddlewareInterface|null
      */
     protected function getMiddleware(): MiddlewareInterface
     {
