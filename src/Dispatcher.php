@@ -42,10 +42,8 @@ class Dispatcher implements RequestHandlerInterface
 
     /**
      * @param bool $status
-     *
-     * @return \Woody\Http\Server\Middleware\Dispatcher
      */
-    public function enableDebug($status = null): self
+    public function enableDebug($status = null): void
     {
         $this->debug = (is_null($status) || $status === true);
     }
