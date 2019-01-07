@@ -17,6 +17,41 @@ You can transmit object between middleware using attribute attached to the reque
 
 ## Implementation
 
+### Middleware
+
+````php
+<?php
+
+namespace App;
+
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+use Woody\Http\Message\Response;
+use Woody\Http\Server\Middleware\MiddlewareInterface;
+
+class MyAppMiddleware implements MiddlewareInterface {
+
+    public function isEnabled(bool $debug): bool
+    {
+        return true;
+    }
+
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    {
+        if ($request->getRequestTarget() == '/test') {
+            $data = 'Text 1';
+        } else {
+            $data = 'Text 2';
+        }
+        
+        return new Response(200, ['Content-Type' => 'application/json'], json_encode($data));
+    }
+}
+````
+
+
+### Middleware declaration
 
 Note: this sample requires `http-interop/response-sender`, 
 available [here](https://packagist.org/packages/http-interop/response-sender).
@@ -42,6 +77,7 @@ $response = $dispatcher->handle($request);
 Http\Response\send($response);
 ````
 
+### Callback declaration
 
 The `dispatcher` can also accept callback functions.
 
@@ -57,6 +93,7 @@ use Woody\Http\Message\ServerRequest;
 $request = ServerRequest::fromGlobals();
 
 $dispatcher = new Dispatcher();
+$dispatcher->pipe(new LogMiddleware());
 $dispatcher->pipe(function(ServerRequest $request, Dispatcher $dispatcher) {
     return new Response(200, ['Content-Type' => 'application/json'], json_encode(['user_id' => 42]));
 });
