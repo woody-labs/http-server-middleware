@@ -20,8 +20,6 @@ You can transmit object between middleware using attribute attached to the reque
 ### Middleware
 
 ````php
-<?php
-
 namespace App;
 
 use Psr\Http\Message\ResponseInterface;
@@ -57,8 +55,6 @@ Note: this sample requires `http-interop/response-sender`,
 available [here](https://packagist.org/packages/http-interop/response-sender).
 
 ````php
-<?php
-
 include 'vendor/autoload.php';
 
 use Woody\Http\Server\Middleware\Dispatcher;
@@ -82,8 +78,6 @@ Http\Response\send($response);
 The `dispatcher` can also accept callback functions.
 
 ````php
-<?php
-
 include 'vendor/autoload.php';
 
 use Woody\Http\Message\Response;
