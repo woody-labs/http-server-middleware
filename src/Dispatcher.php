@@ -2,10 +2,10 @@
 
 namespace Woody\Http\Server\Middleware;
 
-use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Woody\Http\Message\Response;
 
 /**
  * Class Dispatcher
