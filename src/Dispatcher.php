@@ -16,7 +16,7 @@ class Dispatcher implements RequestHandlerInterface
 {
 
     /**
-     * @var \Woody\Http\Server\Middleware\MiddlewareInterface[]
+     * @var \Woody\Http\Server\Middleware\MiddlewareInterface[]|callable[]
      */
     protected $middlewareStack;
 
@@ -49,12 +49,16 @@ class Dispatcher implements RequestHandlerInterface
     }
 
     /**
-     * @param \Woody\Http\Server\Middleware\MiddlewareInterface $middleware
+     * @param \Woody\Http\Server\Middleware\MiddlewareInterface|callable $middleware
      */
-    public function pipe(MiddlewareInterface $middleware): void
+    public function pipe($middleware): void
     {
-        if ($middleware->isEnabled($this->debug)) {
+        if ($middleware instanceof MiddlewareInterface && $middleware->isEnabled($this->debug)) {
             $this->middlewareStack[] = $middleware;
+        } elseif (is_callable($middleware)) {
+            $this->middlewareStack[] = $middleware;
+        } else {
+            throw new \InvalidArgumentException('Middleware not supported');
         }
     }
 
@@ -76,7 +80,11 @@ class Dispatcher implements RequestHandlerInterface
         if ($middleware = $this->getMiddleware()) {
             $this->index++;
 
-            return $middleware->process($request, $this);
+            if ($middleware instanceof MiddlewareInterface) {
+                return $middleware->process($request, $this);
+            } elseif (is_callable($middleware)) {
+                return call_user_func($middleware, $request, $this);
+            }
         }
 
         // Return default value.
@@ -84,9 +92,9 @@ class Dispatcher implements RequestHandlerInterface
     }
 
     /**
-     * @return \Woody\Http\Server\Middleware\MiddlewareInterface|null
+     * @return \Woody\Http\Server\Middleware\MiddlewareInterface|callable|null
      */
-    protected function getMiddleware(): MiddlewareInterface
+    protected function getMiddleware()
     {
         if (isset($this->middlewareStack[$this->index])) {
             return $this->middlewareStack[$this->index];
@@ -100,6 +108,6 @@ class Dispatcher implements RequestHandlerInterface
      */
     protected function getDefaultResponse(): Response
     {
-        return new Response();
+        return new Response(204);
     }
 }
