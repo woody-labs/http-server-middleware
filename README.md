@@ -39,7 +39,7 @@ class MyAppMiddleware implements MiddlewareInterface {
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if ($request->getRequestTarget() == '/test') {
+        if ($request->getUri()->getPath() == '/test') {
             $data = 'Text 1';
         } else {
             $data = 'Text 2';
