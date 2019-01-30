@@ -53,8 +53,10 @@ class Dispatcher implements RequestHandlerInterface
      */
     public function pipe($middleware): void
     {
-        if ($middleware instanceof MiddlewareInterface && $middleware->isEnabled($this->debug)) {
-            $this->middlewareStack[] = $middleware;
+        if ($middleware instanceof MiddlewareInterface) {
+            if ($middleware->isEnabled($this->debug)) {
+                $this->middlewareStack[] = $middleware;
+            }
         } elseif (is_callable($middleware)) {
             $this->middlewareStack[] = $middleware;
         } else {
